@@ -1,23 +1,38 @@
+/*
+ * Declarations for ClimbChromosome class to be used in a (GA) to
+ * approximate the travelling-salesperson problem (TSP).
+ * ClimbChromosome is a Chromosome (see chromosome.hh) that overrides
+ * the mutation operator with local hill climbing.
+ */
+
 #pragma once
 
+#include "cities.hh"
 #include "chromosome.hh"
 
-class ClimbChromosome : public Chromosome
-{
-	public:
-        //I think we need to explicitly write the constructor for this case? testing agrees
-        ClimbChromosome(const Cities* cities)
-        : Chromosome(cities)
-        {}
+class ClimbChromosome : public Chromosome {
+ protected:
+  // Disable public copying of objects for polymorphism:
+  ClimbChromosome(const ClimbChromosome&) = default;
+  ClimbChromosome(ClimbChromosome&&) = default;
+  ClimbChromosome& operator=(const ClimbChromosome&) = default;
+  ClimbChromosome& operator=(ClimbChromosome&&) = default;
 
-        // Need to explicitly write the virtual destructor even though we're not changing it
-        virtual ~ClimbChromosome() = default;
+ public:
+  // Creation method for new Chromsomoe. Saves a copy of the cities and
+  // generates a completely random permutation from a list of cities.
+  ClimbChromosome(const Cities* cities) : Chromosome(cities) {}
 
-        virtual void mutate() override;
-        
-        virtual ClimbChromosome* clone() const override
-        {
-            return new ClimbChromosome(*this);
-        }
-        
-};       
+  virtual ~ClimbChromosome() = default;
+
+  // Polymorphic creation method from an existing ClimbChromosome.
+  // This method allocates memory for the newly created ClimbChromosome.
+  // It is the caller's responsibility to free this memory.
+  virtual Chromosome* clone() const override
+  {
+    return new ClimbChromosome(*this);
+  }
+
+  // Perform a single mutation on this ClimbChromosome
+  virtual void mutate() override;
+};

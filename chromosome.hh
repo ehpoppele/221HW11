@@ -14,8 +14,8 @@
 #include <random>
 
 class Chromosome {
-  protected:
-   // Disable public copying of objects for polymorphism:
+ protected:
+  // Disable public copying of objects for polymorphism:
   Chromosome(const Chromosome&) = default;
   Chromosome(Chromosome&&) = default;
   Chromosome& operator=(const Chromosome&) = default;
@@ -43,7 +43,8 @@ class Chromosome {
   // Return a pair of offsprings by recombining with another chromosome
   // Note: this method allocates memory for the new offsprings
   // It is the caller's responsibility to free this memory.
-  virtual std::pair<Chromosome*, Chromosome*> recombine(const Chromosome* other);
+  virtual std::pair<Chromosome*, Chromosome*>
+  recombine(const Chromosome* other);
 
   // Compute total distance to traverse cities in ordering:
   double calculate_total_distance() const
@@ -76,7 +77,7 @@ class Chromosome {
   bool is_valid() const;
 
   // Find whether a certain value appears in a given range of the chromosome.
-  // Returns true if value is within the specified the range specified
+  // Returns true if value is in order_ within the specified the range specified
   // [begin, end) and false otherwise.
   bool is_in_range(unsigned value, unsigned begin, unsigned end) const;
 
