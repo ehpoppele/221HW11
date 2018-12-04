@@ -16,6 +16,8 @@ The only file that really matters here is the tsp.cc file; that's where the main
 For my best results, I found that 4,000,000 iterations, a population of 2,000, a mutation rate of 0.5 (using climb chromosomes) and 16 threads worked pretty well, without taking an excessive amount of time. 
 The best tour I found was of length 5517.48, currently appearing in shortest.csv. I don't know it's a csv, but the assignment said so.
 Below are a few runtime values:
+### Table
+
 |nthreads|time(min:sec.ms)|
 |--------|----------------|
 |16      |1:32.161        |
