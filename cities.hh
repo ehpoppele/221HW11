@@ -45,6 +45,13 @@ class Cities {
 
   friend std::istream& operator>>(std::istream& is, Cities& cities);
   friend std::ostream& operator<<(std::ostream& os, const Cities& cities);
+  
+    //Helper function that returns the elements of a cities object
+    std::vector<coord_t> get_elements() const;
+    
+    //helper method for finding total distance
+    //finds distance between two cities
+    double dist_between(coord_t city_a, coord_t city_b) const;
 
  private:
   using cities_t = std::vector<coord_t>;

@@ -93,4 +93,14 @@ random_permutation(unsigned len)
   return ret;
 }
 
+//returns the distance between two city coord pairs
+double Cities::dist_between(coord_t city_a, coord_t city_b) const
+{
+    return std::hypot(static_cast<double>(city_a.first-city_b.first), static_cast<double>(city_a.second-city_b.second));//Cast as doubles so hypot returns doubles
+}
 
+//helper function that returns elements, used for testing
+std::vector<Cities::coord_t> Cities::get_elements() const
+{
+    return this->cities_;
+}

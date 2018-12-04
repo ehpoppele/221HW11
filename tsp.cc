@@ -206,11 +206,11 @@ threaded_ga_search(const Cities& cities,
           double mutation_rate,
           unsigned nthread = 1)
 {
-  auto best_dist = 1e100 + nthread; // Eliminate silly warning
-  auto best_ordering = Cities::permutation_t(cities.size());
+  auto best_dist = 1e100;
+  //I've got a strange bug where my best ordering is a path length zero illegal permutation
+  //So we initialize it to be random to fix this. (If it still turns out better than the rest, then I guess that's a bonus).
+  Cities::permutation_t best_ordering = random_permutation(cities.size());
   auto best_mutex = std::mutex();
-
-  Deme deme(&cities, pop_size, mutation_rate);
 
   // Evolve the population to make it fitter and keep track of
   // the shortest distance generated
@@ -223,10 +223,13 @@ threaded_ga_search(const Cities& cities,
       best_ordering = ordering;
     }
   }*/
-  
+
   auto run_one_thread = [&]() {
     TournamentDeme deme(&cities, pop_size, mutation_rate);
-    Cities::permutation_t my_best;
+    //We have to actually initialize a best ordering here.
+    //Readme has a better explanation of the error, but essentially
+    //An empty initial my_best could lead to an empty best_ordering.
+    Cities::permutation_t my_best = random_permutation(cities.size());
     for (long i = 1; i <= (iters/pop_size)/nthread; ++i) {
         deme.compute_next_generation();    // generate next generation
         // Find best individual in this population
@@ -239,7 +242,7 @@ threaded_ga_search(const Cities& cities,
       auto guard = std::lock_guard(best_mutex);
       // Repeat check, maybe something changed:
       if (cities.total_path_distance(my_best) < cities.total_path_distance(best_ordering)) {
-        best_ordering = my_best;
+          best_ordering = my_best;
       }
     }
   };
@@ -281,7 +284,7 @@ int main(int argc, char** argv)
   const auto nthread = (argc > 4)? atoi(argv[4]) : 1;
   const auto granularity = (argc > 5)? atoi(argv[5]) : 100;
 
-  constexpr unsigned NUM_ITER = 2'000'000;
+  constexpr unsigned NUM_ITER = 4'000'000;
 
 
 //  const auto best_ordering = exhaustive_search(cities);
@@ -290,7 +293,7 @@ int main(int argc, char** argv)
 //  const auto best_ordering = granular_randomized_search(cities, NUM_ITER, nthread, granularity);
 //  const auto best_ordering = ga_search(cities, NUM_ITER, pop_size, mut_rate, nthread);
   const auto best_ordering = threaded_ga_search(cities, NUM_ITER, pop_size, mut_rate, nthread);
-
+  
   auto out = std::ofstream("shortest.tsv");
   if (!out.is_open()) {
     std::cerr << "Can't open output file to record shortest path!\n";

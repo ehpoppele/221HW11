@@ -4,7 +4,7 @@
  */
 
 #include "cities.hh"
-#include "climb_chromosome.hh"
+#include "hgrex_chromosome.hh"
 #include "deme.hh"
 
 #include <algorithm>
@@ -20,7 +20,7 @@ Deme::Deme(const Cities* cities_ptr, unsigned pop_size, double mut_rate)
 {
   // Create random Chromosomes and put into population vector
   for (auto& cp : pop_) {
-    cp = new ClimbChromosome(cities_ptr);
+    cp = new HgrexChromosome(cities_ptr);
   }
 }
 
@@ -56,10 +56,16 @@ void Deme::compute_next_generation()
     if (dist(generator_) <= mut_rate_) {
       p2->mutate();
     }
+    if (dynamic_cast<HgrexChromosome*>(p1))
+    {
+        if (dynamic_cast<HgrexChromosome*>(p2))
+        {
+            auto children = dynamic_cast<HgrexChromosome*>(p1) -> recombine(dynamic_cast<HgrexChromosome*>(p2));
+            newpop[i++] = children.first;
+            newpop[i++] = children.second;
+        } else {assert(false);}
+    } else {assert(false);}    
 
-    auto children = p1->recombine(p2);
-    newpop[i++] = children.first;
-    newpop[i++] = children.second;
   }
 
   for (auto cp : pop_) {
